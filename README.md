@@ -18,6 +18,19 @@ A short cheat-sheet with Xcode 8.3.2 Playground ([Design-Patterns.zip](https://r
 
 ```
 
+Behavioral
+==========
+
+>In software engineering, behavioral design patterns are design patterns that identify common communication patterns between objects and realize these patterns. By doing so, these patterns increase flexibility in carrying out this communication.
+>
+>**Source:** [wikipedia.org](http://en.wikipedia.org/wiki/Behavioral_pattern)
+
+```swift
+
+import Swift
+import Foundation
+```
+
 🐝 Chain Of Responsibility
 --------------------------
 
@@ -772,19 +785,6 @@ let newsPage = NewsPage()
 newsPage.showPage()
 ```
 
-Behavioral
-==========
-
->In software engineering, behavioral design patterns are design patterns that identify common communication patterns between objects and realize these patterns. By doing so, these patterns increase flexibility in carrying out this communication.
->
->**Source:** [wikipedia.org](http://en.wikipedia.org/wiki/Behavioral_pattern)
-
-```swift
-
-import Swift
-import Foundation
-```
-
 🏃 Visitor
 ----------
 
@@ -882,6 +882,19 @@ project.beWritten(developer: senior)
 
 ```swift
 
+```
+
+Creational
+==========
+
+> In software engineering, creational design patterns are design patterns that deal with object creation mechanisms, trying to create objects in a manner suitable to the situation. The basic form of object creation could result in design problems or added complexity to the design. Creational design patterns solve this problem by somehow controlling this object creation.
+>
+>**Source:** [wikipedia.org](http://en.wikipedia.org/wiki/Creational_pattern)
+
+```swift
+
+import Swift
+import Foundation
 ```
 
 🌰 Abstract Factory
@@ -1258,12 +1271,12 @@ struct Game {
 let game = Game.sharedGame
 ```
 
-Creational
+Structural
 ==========
 
-> In software engineering, creational design patterns are design patterns that deal with object creation mechanisms, trying to create objects in a manner suitable to the situation. The basic form of object creation could result in design problems or added complexity to the design. Creational design patterns solve this problem by somehow controlling this object creation.
+>In software engineering, structural design patterns are design patterns that ease the design by identifying a simple way to realize relationships between entities.
 >
->**Source:** [wikipedia.org](http://en.wikipedia.org/wiki/Creational_pattern)
+>**Source:** [wikipedia.org](http://en.wikipedia.org/wiki/Structural_pattern)
 
 ```swift
 
@@ -1702,19 +1715,6 @@ class ProxyProject: Project {
 
 var project = ProxyProject(url: "https://github.com/zsergey/realProject")
 project.run()
-```
-
-Structural
-==========
-
->In software engineering, structural design patterns are design patterns that ease the design by identifying a simple way to realize relationships between entities.
->
->**Source:** [wikipedia.org](http://en.wikipedia.org/wiki/Structural_pattern)
-
-```swift
-
-import Swift
-import Foundation
 ```
 
 
