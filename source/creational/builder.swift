@@ -7,50 +7,89 @@ An external class controls the construction algorithm.
 
 ### Example
 */
-class DeathStarBuilder {
-
-    var x: Double?
-    var y: Double?
-    var z: Double?
-
-    typealias BuilderClosure = (DeathStarBuilder) -> ()
-
-    init(buildClosure: BuilderClosure) {
-        buildClosure(self)
-    }
+enum Cms {
+  case wordpress
+  case alifresco
 }
 
-struct DeathStar : CustomStringConvertible {
-
-    let x: Double
-    let y: Double
-    let z: Double
-
-    init?(builder: DeathStarBuilder) {
-
-        if let x = builder.x, let y = builder.y, let z = builder.z {
-            self.x = x
-            self.y = y
-            self.z = z
-        } else {
-            return nil
-        }
+struct Website {
+  var name: String?
+  var cms: Cms?
+  var price: Int?
+  
+  func printWebsite(){
+    guard let name = name, let cms = cms, let price = price else {
+      return
     }
+    print("Name \(name), cms \(cms), price \(price)")
+  }
+}
 
-    var description:String {
-        return "Death Star at (x:\(x) y:\(y) z:\(z))"
-    }
+protocol WebsiteBuilder {
+  var website: Website? { set get }
+  func createWebsite()
+  func buildName()
+  func buildCms()
+  func buildPrice()
+}
+
+class VisitCardWebsiteBuilder: WebsiteBuilder {
+  internal var website: Website?
+  
+  internal func createWebsite() {
+    self.website = Website()
+  }
+  
+  internal func buildName() {
+    self.website?.name = "Visit Card"
+  }
+  
+  internal func buildCms() {
+    self.website?.cms = .wordpress
+  }
+  
+  internal func buildPrice() {
+    self.website?.price = 500
+  }
+}
+
+class EnterpriseWebsiteBuilder: WebsiteBuilder {
+  internal var website: Website?
+  
+  internal func createWebsite() {
+    self.website = Website()
+  }
+  
+  internal func buildName() {
+    self.website?.name = "Enterprise website"
+  }
+  
+  internal func buildCms() {
+    self.website?.cms = .alifresco
+  }
+  
+  internal func buildPrice() {
+    self.website?.price = 10000
+  }
+}
+
+struct Director {
+  var builder: WebsiteBuilder
+  
+  func buildWebsite() -> Website {
+    builder.createWebsite()
+    builder.buildName()
+    builder.buildCms()
+    builder.buildPrice()
+    return builder.website!
+  }
 }
 /*:
 ### Usage
 */
-let empire = DeathStarBuilder { builder in
-    builder.x = 0.1
-    builder.y = 0.2
-    builder.z = 0.3
-}
-
-let deathStar = DeathStar(builder:empire)
+let director = Director(builder: EnterpriseWebsiteBuilder())
+let website = director.buildWebsite()
+website.printWebsite()
 /*:
 >**Further Examples:** [Design Patterns in Swift](https://github.com/kingreza/Swift-Builder)
 */

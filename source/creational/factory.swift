@@ -6,55 +6,53 @@ The factory pattern is used to replace class constructors, abstracting the proce
 
 ### Example
 */
-protocol Currency {
-    func symbol() -> String
-    func code() -> String
+protocol Developer {
+  func writeCode()
 }
 
-class Euro : Currency {
-    func symbol() -> String {
-        return "€"
-    }
-    
-    func code() -> String {
-        return "EUR"
-    }
+struct ObjCDeveloper: Developer {
+  func writeCode() {
+    print("ObjC developer writes Objective C code...")
+  }
 }
 
-class UnitedStatesDolar : Currency {
-    func symbol() -> String {
-        return "$"
-    }
-    
-    func code() -> String {
-        return "USD"
-    }
+struct SwiftDeveloper: Developer {
+  func writeCode() {
+    print("Swift developer writes Swift code...")
+  }
 }
 
-enum Country {
-    case unitedStates, spain, uk, greece
+protocol DeveloperFactory {
+  func newDeveloper() -> Developer
 }
 
-enum CurrencyFactory {
-    static func currency(for country:Country) -> Currency? {
+struct ObjCDeveloperFactory: DeveloperFactory {
+  func newDeveloper() -> Developer {
+    return ObjCDeveloper()
+  }
+}
 
-        switch country {
-            case .spain, .greece :
-                return Euro()
-            case .unitedStates :
-                return UnitedStatesDolar()
-            default:
-                return nil
-        }
-        
+struct SwiftDeveloperFactory: DeveloperFactory {
+  func newDeveloper() -> Developer {
+    return SwiftDeveloper()
+  }
+}
+
+enum Languages {
+  case objC
+  case swift
+  
+  var factory: DeveloperFactory {
+    switch self {
+    case .objC:
+      return ObjCDeveloperFactory()
+    case .swift:
+      return SwiftDeveloperFactory()
     }
+  }
 }
 /*:
 ### Usage
 */
-let noCurrencyCode = "No Currency Code Available"
-
-CurrencyFactory.currency(for: .greece)?.code() ?? noCurrencyCode
-CurrencyFactory.currency(for: .spain)?.code() ?? noCurrencyCode
-CurrencyFactory.currency(for: .unitedStates)?.code() ?? noCurrencyCode
-CurrencyFactory.currency(for: .uk)?.code() ?? noCurrencyCode
+let developer = Languages.swift.factory.newDeveloper()
+developer.writeCode()

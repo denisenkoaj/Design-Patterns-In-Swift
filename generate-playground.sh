@@ -12,6 +12,23 @@ cleanThisMessForReadme () {
 	{ rm $FILENAME && awk 'NR>1{print buf}{buf = $0}' > $FILENAME; } < $FILENAME
 }
 
+makePlayground () {
+  for i in $( ls source/$1 );
+  do
+
+  if [[ $i == *"title"* ]]; then
+  continue
+  fi
+
+  cat source/$1/_title.swift source/$1/$i > $i
+  baseName=`echo $i | cut -d "." -f 1`
+
+  cp $i ./$1.playground/Pages/$baseName.xcplaygroundpage/Contents.swift
+  rm $i
+
+  done
+}
+
 cat source/behavioral/* > ./Behavioral.swift
 cat source/creational/* > ./Creational.swift
 cat source/structural/* > ./Structural.swift
@@ -26,9 +43,17 @@ cleanThisMessForReadme ./contents.swift
 
 cp ./contents.swift ./README.md
 
-zip -r -X Design-Patterns.playground.zip ./Design-Patterns.playground
+#zip -r -X Design-Patterns.playground.zip ./Design-Patterns.playground
 
 rm ./Behavioral.swift
 rm ./Creational.swift
 rm ./Structural.swift
 rm ./contents.swift
+
+makePlayground Behavioral
+makePlayground Creational
+makePlayground Structural
+
+zip -r -X Design-Patterns.zip ./Behavioral.playground ./Creational.playground ./Structural.playground
+
+

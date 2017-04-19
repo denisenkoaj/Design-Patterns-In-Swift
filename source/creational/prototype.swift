@@ -7,31 +7,33 @@ This practise is particularly useful when the construction of a new object is in
 
 ### Example
 */
-class ChungasRevengeDisplay {
-    var name: String?
-    let font: String
+protocol Copyable {
+  func copy() -> Any
+}
 
-    init(font: String) {
-        self.font = font
-    }
+struct Project: Copyable {
+  var id: Int
+  var name: String
+  var source: String
+  
+  func copy() -> Any {
+    let object = Project(id: id, name: name, source: source)
+    return object
+  }
+}
 
-    func clone() -> ChungasRevengeDisplay {
-        return ChungasRevengeDisplay(font:self.font)
-    }
+struct ProjectFactory {
+  var project: Project
+  func cloneProject() -> Project {
+    return project.copy() as! Project
+  }
 }
 /*:
 ### Usage
 */
-let Prototype = ChungasRevengeDisplay(font:"GotanProject")
-
-let Philippe = Prototype.clone()
-Philippe.name = "Philippe"
-
-let Christoph = Prototype.clone()
-Christoph.name = "Christoph"
-
-let Eduardo = Prototype.clone()
-Eduardo.name = "Eduardo"
+let master = Project(id: 1, name: "Playground.swift", source: "let sourceCode = SourceCode()")
+let factory = ProjectFactory(project: master)
+let masterClone = factory.cloneProject()
 /*:
 >**Further Examples:** [Design Patterns in Swift](https://github.com/kingreza/Swift-Prototype)
 */

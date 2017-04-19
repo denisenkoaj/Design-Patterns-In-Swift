@@ -6,45 +6,48 @@ The composite pattern is used to create hierarchical, recursive tree structures 
 
 ### Example
 */
-/*:
-Component
-*/
-protocol Shape {
-    func draw(fillColor: String)
-}
-/*: 
-Leafs
-*/ 
-final class Square : Shape {
-    func draw(fillColor: String) {
-        print("Drawing a Square with color \(fillColor)")
-    }
+protocol Developer {
+  func writeCode()
 }
 
-final class Circle : Shape {
-    func draw(fillColor: String) {
-        print("Drawing a circle with color \(fillColor)")
-    }
+protocol Team {
+  var developers: [Developer] { set get }
+  func addDeveloper(developer: Developer)
+  func createProject()
 }
 
-/*:
-Composite
-*/
-final class Whiteboard : Shape {
-    lazy var shapes = [Shape]()
-    
-    init(_ shapes:Shape...) {
-        self.shapes = shapes
+struct SwiftDeveloper: Developer{
+  func writeCode() {
+    print("Swift Developer writes Swift code...")
+  }
+}
+
+struct ObjCDeveloper: Developer{
+  func writeCode() {
+    print("ObjC Developer writes Objective-C code...")
+  }
+}
+
+class BankTeam: Team {
+  var developers = [Developer]()
+  
+  func addDeveloper(developer: Developer) {
+    developers.append(developer)
+  }
+  
+  func createProject() {
+    for developer in developers {
+      developer.writeCode()
     }
-    
-    func draw(fillColor: String) {
-        for shape in self.shapes {
-            shape.draw(fillColor: fillColor)
-        }
-    }
+  }
 }
 /*:
 ### Usage:
 */
-var whiteboard = Whiteboard(Circle(), Square())
-whiteboard.draw("Red")
+let team = BankTeam()
+team.addDeveloper(developer: ObjCDeveloper())
+team.addDeveloper(developer: ObjCDeveloper())
+team.addDeveloper(developer: ObjCDeveloper())
+team.addDeveloper(developer: ObjCDeveloper())
+team.addDeveloper(developer: SwiftDeveloper())
+team.createProject()

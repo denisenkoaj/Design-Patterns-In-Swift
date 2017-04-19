@@ -6,56 +6,85 @@ The visitor pattern is used to separate a relatively complex set of structured d
 
 ### Example
 */
-protocol PlanetVisitor {
-	func visit(planet: PlanetAlderaan)
-	func visit(planet: PlanetCoruscant)
-	func visit(planet: PlanetTatooine)
-    func visit(planet: MoonJedah)
+protocol Developer {
+  func create(project: ProjectClass)
+  func create(project: Database)
+  func create(project: Test)
 }
 
-protocol Planet {
-	func accept(visitor: PlanetVisitor)
+protocol ProjectElement {
+  func beWritten(developer: Developer)
 }
 
-class MoonJedah: Planet {
-    func accept(visitor: PlanetVisitor) { visitor.visit(planet: self) }
+struct ProjectClass: ProjectElement {
+  func beWritten(developer: Developer) {
+    developer.create(project: self)
+  }
 }
 
-class PlanetAlderaan: Planet {
-    func accept(visitor: PlanetVisitor) { visitor.visit(planet: self) }
+struct Database: ProjectElement {
+  func beWritten(developer: Developer) {
+    developer.create(project: self)
+  }
 }
 
-class PlanetCoruscant: Planet {
-	func accept(visitor: PlanetVisitor) { visitor.visit(planet: self) }
+struct Test: ProjectElement {
+  func beWritten(developer: Developer) {
+    developer.create(project: self)
+  }
 }
 
-class PlanetTatooine: Planet {
-	func accept(visitor: PlanetVisitor) { visitor.visit(planet: self) }
+struct Project: ProjectElement {
+  var projectElements: [ProjectElement] = [ProjectClass(), Database(), Test()]
+  
+  func beWritten(developer: Developer) {
+    for projectElement in projectElements {
+      projectElement.beWritten(developer: developer)
+    }
+  }
 }
 
-
-
-class NameVisitor: PlanetVisitor {
-	var name = ""
-
-	func visit(planet: PlanetAlderaan)  { name = "Alderaan" }
-	func visit(planet: PlanetCoruscant) { name = "Coruscant" }
-	func visit(planet: PlanetTatooine)  { name = "Tatooine" }
-    func visit(planet: MoonJedah)     	{ name = "Jedah" }
+struct JuniorDeveloper: Developer {
+  func create(project: ProjectClass) {
+    print("Writing poor class...")
+  }
+  
+  func create(project: Database) {
+    print("Drop database...")
+  }
+  
+  func create(project: Test) {
+    print("Creating not reliable test...")
+  }
 }
 
+struct SeniorDeveloper: Developer {
+  func create(project: ProjectClass) {
+    print("Rewriting class after junior...")
+  }
+  
+  func create(project: Database) {
+    print("Fixing database...")
+  }
+  
+  func create(project: Test) {
+    print("Creating reliable test...")
+  }
+}
 /*:
 ### Usage
 */
-let planets: [Planet] = [PlanetAlderaan(), PlanetCoruscant(), PlanetTatooine(), MoonJedah()]
+let project = Project()
+let junior = JuniorDeveloper()
+let senior = SeniorDeveloper()
 
-let names = planets.map { (planet: Planet) -> String in
-	let visitor = NameVisitor()
-    planet.accept(visitor: visitor)
-	return visitor.name
-}
+print("Junior in Action")
+project.beWritten(developer: junior)
 
-names
+print("")
+
+print("Senior in Action")
+project.beWritten(developer: senior)
 /*:
 >**Further Examples:** [Design Patterns in Swift](https://github.com/kingreza/Swift-Visitor)
 */

@@ -6,42 +6,58 @@ The strategy pattern is used to create an interchangeable family of algorithms f
 
 ### Example
 */
-protocol PrintStrategy {
-    func print(_ string: String) -> String
+protocol Activity {
+  func justDoIt()
 }
 
-final class Printer {
-
-    private let strategy: PrintStrategy
-
-    func print(_ string: String) -> String {
-        return self.strategy.print(string)
-    }
-
-    init(strategy: PrintStrategy) {
-        self.strategy = strategy
-    }
+struct Coding: Activity {
+  func justDoIt() {
+    print("Writing code...")
+  }
 }
 
-final class UpperCaseStrategy: PrintStrategy {
-    func print(_ string: String) -> String {
-        return string.uppercased()
-    }
+struct Reading: Activity {
+  func justDoIt() {
+    print("Reading book...")
+  }
 }
 
-final class LowerCaseStrategy: PrintStrategy {
-    func print(_ string:String) -> String {
-        return string.lowercased()
-    }
+struct Sleeping: Activity {
+  func justDoIt() {
+    print("Sleeping...")
+  }
+}
+
+struct Training: Activity {
+  func justDoIt() {
+    print("Training...")
+  }
+}
+
+struct Developer {
+  var activity: Activity
+  
+  func executeActivity() {
+    activity.justDoIt()
+  }
 }
 /*:
 ### Usage
 */
-var lower = Printer(strategy: LowerCaseStrategy())
-lower.print("O tempora, o mores!")
+var developer = Developer(activity: Sleeping())
+developer.executeActivity()
 
-var upper = Printer(strategy: UpperCaseStrategy())
-upper.print("O tempora, o mores!")
+developer.activity = Training()
+developer.executeActivity()
+
+developer.activity = Coding()
+developer.executeActivity()
+
+developer.activity = Reading()
+developer.executeActivity()
+
+developer.activity = Sleeping()
+developer.executeActivity()
 /*:
 >**Further Examples:** [Design Patterns in Swift](https://github.com/kingreza/Swift-Strategy)
 */

@@ -6,39 +6,44 @@ The iterator pattern is used to provide a standard interface for traversing a co
 
 ### Example:
 */
-struct Novella {
-    let name: String
+protocol Iterator {
+  func hasNext() -> Bool
+  mutating func next() -> String
 }
 
-struct Novellas {
-    let novellas: [Novella]
+protocol Collection {
+  func getIterator() -> Iterator
 }
 
-struct NovellasIterator: IteratorProtocol {
-
-    private var current = 0
-    private let novellas: [Novella]
-
-    init(novellas: [Novella]) {
-        self.novellas = novellas
+struct SwiftDeveloper: Collection {
+  var name: String
+  var skills: [String]
+  
+  private struct SkillIterator: Iterator {
+    var index: Int
+    var data: [String]
+    func hasNext() -> Bool {
+      return index < data.count
     }
-
-    mutating func next() -> Novella? {
-        defer { current += 1 }
-        return novellas.count > current ? novellas[current] : nil
+    mutating func next() -> String {
+      let result = data[index]
+      index = index + 1
+      return result
     }
-}
-
-extension Novellas: Sequence {
-    func makeIterator() -> NovellasIterator {
-        return NovellasIterator(novellas: novellas)
-    }
+  }
+  
+  func getIterator() -> Iterator {
+    return SkillIterator(index: 0, data: skills)
+  }
 }
 /*:
 ### Usage
 */
-let greatNovellas = Novellas(novellas: [Novella(name: "The Mist")] )
-
-for novella in greatNovellas {
-    print("I've read: \(novella)")
+let skills = ["Swift", "ObjC", "Sketch", "PM"]
+let swiftDeveloper = SwiftDeveloper(name: "Sergey Zapuhlyak", skills: skills)
+var iterator = swiftDeveloper.getIterator()
+print("Developer \(swiftDeveloper.name)")
+print("Skills")
+while iterator.hasNext() {
+  print("\(iterator.next())")
 }

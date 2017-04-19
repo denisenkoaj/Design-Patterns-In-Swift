@@ -6,48 +6,63 @@ The adapter pattern is used to provide a link between two otherwise incompatible
 
 ### Example
 */
-protocol OlderDeathStarSuperLaserAiming {
-    var angleV: NSNumber {get}
-    var angleH: NSNumber {get}
+protocol Database {
+  func insert()
+  func update()
+  func select()
+  func remove()
 }
-/*:
-**Adaptee**
-*/
-struct DeathStarSuperlaserTarget {
-    let angleHorizontal: Double
-    let angleVertical: Double
 
-    init(angleHorizontal:Double, angleVertical:Double) {
-        self.angleHorizontal = angleHorizontal
-        self.angleVertical = angleVertical
-    }
+class SwiftApp {
+  func saveObject() {
+    print("Saving Swift Object...")
+  }
+  
+  func updateObject() {
+    print("Updating Swift Object...")
+  }
+  
+  func loadObject() {
+    print("Loading Swift Object...")
+  }
+  
+  func deleteObject() {
+    print("Deleting Swift Object...")
+  }
 }
-/*:
-**Adapter**
-*/
-struct OldDeathStarSuperlaserTarget : OlderDeathStarSuperLaserAiming {
-    private let target : DeathStarSuperlaserTarget
 
-    var angleV:NSNumber {
-        return NSNumber(value: target.angleVertical)
-    }
+class AdapterSwiftAppToDatabase: SwiftApp, Database {
+  func insert() {
+    saveObject()
+  }
+  
+  func update() {
+    updateObject()
+  }
+  
+  func select() {
+    loadObject()
+  }
+  
+  func remove() {
+    deleteObject()
+  }
+}
 
-    var angleH:NSNumber {
-        return NSNumber(value: target.angleHorizontal)
-    }
-
-    init(_ target:DeathStarSuperlaserTarget) {
-        self.target = target
-    }
+struct DatabaseManager {
+  var database: Database
+  func run() {
+    database.insert()
+    database.update()
+    database.select()
+    database.remove()
+  }
 }
 /*:
 ### Usage
 */
-let target = DeathStarSuperlaserTarget(angleHorizontal: 14.0, angleVertical: 12.0)
-let oldFormat = OldDeathStarSuperlaserTarget(target)
-
-oldFormat.angleH
-oldFormat.angleV
+let databaseManager = DatabaseManager(database: AdapterSwiftAppToDatabase())
+databaseManager.run()
 /*:
 >**Further Examples:** [Design Patterns in Swift](https://github.com/kingreza/Swift-Adapter)
 */

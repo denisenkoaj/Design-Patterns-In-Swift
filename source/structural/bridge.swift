@@ -6,43 +6,49 @@ The bridge pattern is used to separate the abstract elements of a class from the
 
 ### Example
 */
-protocol Switch {
-    var appliance: Appliance {get set}
-    func turnOn()
+protocol Developer {
+  func writeCode()
 }
 
-protocol Appliance {
-    func run()
+protocol Program {
+  var developer: Developer { get set }
+  func develop()
 }
 
-class RemoteControl: Switch {
-    var appliance: Appliance
-
-    func turnOn() {
-        self.appliance.run()
-    }
-    
-    init(appliance: Appliance) {
-        self.appliance = appliance
-    }
+struct SwiftDeveloper: Developer {
+  func writeCode() {
+    print("Swift Developer writes Swift code...")
+  }
 }
 
-class TV: Appliance {
-    func run() {
-        print("tv turned on");
-    }
+struct ObjCDeveloper: Developer {
+  func writeCode() {
+    print("ObjC Developer writes Objective-C code...")
+  }
 }
 
-class VacuumCleaner: Appliance {
-    func run() {
-        print("vacuum cleaner turned on")
-    }
+struct BankSystem: Program {
+  var developer: Developer
+  
+  func develop() {
+    print("Bank System development in progress...")
+    developer.writeCode()
+  }
+}
+
+struct StockExchange: Program {
+  var developer: Developer
+  
+  func develop() {
+    print("Stock Exchange development in progress...")
+    developer.writeCode()
+  }
 }
 /*:
 ### Usage
 */
-var tvRemoteControl = RemoteControl(appliance: TV())
-tvRemoteControl.turnOn()
-
-var fancyVacuumCleanerRemoteControl = RemoteControl(appliance: VacuumCleaner())
-fancyVacuumCleanerRemoteControl.turnOn()
+let programs: [Program] = [BankSystem(developer: ObjCDeveloper()),
+                           StockExchange(developer: SwiftDeveloper())]
+for program in programs {
+  program.develop()
+}

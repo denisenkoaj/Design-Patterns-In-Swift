@@ -1,6 +1,3 @@
-//: Behavioral |
-//: [Creational](Creational) |
-//: [Structural](Structural)
 /*:
 Behavioral
 ==========

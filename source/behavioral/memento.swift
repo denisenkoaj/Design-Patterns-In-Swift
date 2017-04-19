@@ -6,78 +6,52 @@ The memento pattern is used to capture the current state of an object and store 
 
 ### Example
 */
-typealias Memento = NSDictionary
-/*:
-Originator
-*/
-protocol MementoConvertible {
-    var memento: Memento { get }
-    init?(memento: Memento)
+struct Project {
+  var version: String
+  var code: String
+  
+  func save() -> Save {
+    return Save(version: version, code: code)
+  }
+  
+  mutating func load(save: Save) {
+    version = save.version
+    code = save.code
+  }
+  
+  func description() -> String {
+    return "Project version = \(version): \n'\(code)'\n"
+  }
 }
 
-struct GameState: MementoConvertible {
-
-    private struct Keys {
-        static let chapter = "com.valve.halflife.chapter"
-        static let weapon = "com.valve.halflife.weapon"
-    }
-
-    var chapter: String
-    var weapon: String
-
-    init(chapter: String, weapon: String) {
-        self.chapter = chapter
-        self.weapon = weapon
-    }
-
-    init?(memento: Memento) {
-        guard let mementoChapter = memento[Keys.chapter] as? String,
-              let mementoWeapon = memento[Keys.weapon] as? String else {
-            return nil
-        }
-
-        chapter = mementoChapter
-        weapon = mementoWeapon
-    }
-
-    var memento: Memento {
-        return [ Keys.chapter: chapter, Keys.weapon: weapon ]
-    }
+struct Save {
+  var version: String
+  var code: String
 }
-/*:
-Caretaker
-*/
-enum CheckPoint {
-    static func save(_ state: MementoConvertible, saveName: String) {
-        let defaults = UserDefaults.standard
-        defaults.set(state.memento, forKey: saveName)
-        defaults.synchronize()
-    }
 
-    static func restore(saveName: String) -> Memento? {
-        let defaults = UserDefaults.standard
-
-        return defaults.object(forKey: saveName) as? Memento
-    }
+struct GithubRepo {
+  var save: Save
 }
 /*:
  ### Usage
 */
-var gameState = GameState(chapter: "Black Mesa Inbound", weapon: "Crowbar")
+print("Creating new project. Version 1.0")
+var project = Project(version: "1.0", code: "let index = 0")
+print(project.description())
 
-gameState.chapter = "Anomalous Materials"
-gameState.weapon = "Glock 17"
-CheckPoint.save(gameState, saveName: "gameState1")
+print("Saving current version to github")
+let github = GithubRepo(save: project.save())
 
-gameState.chapter = "Unforeseen Consequences"
-gameState.weapon = "MP5"
-CheckPoint.save(gameState, saveName: "gameState2")
+print("Updating project to Version 1.1")
+print("Writing poor code...")
+print("Set version 1.1")
+project.version = "1.1"
+project.code = "let index = 0\nindex = 5"
+print(project.description())
 
-gameState.chapter = "Office Complex"
-gameState.weapon = "Crossbow"
-CheckPoint.save(gameState, saveName: "gameState3")
+print("Something went wrong")
+print("Rolling back to Version 1.0")
 
-if let memento = CheckPoint.restore(saveName: "gameState1") {
-    let finalState = GameState(memento: memento)
-    dump(finalState)
-}
+project.load(save: github.save)
+print("Project after rollback")
+print(project.description())

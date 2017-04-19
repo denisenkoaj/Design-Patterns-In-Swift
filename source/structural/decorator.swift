@@ -7,71 +7,41 @@ This provides a flexible alternative to using inheritance to modify behaviour.
 
 ### Example
 */
-protocol Coffee {
-    func getCost() -> Double
-    func getIngredients() -> String
+protocol Developer {
+  func makeJob() -> String
 }
 
-class SimpleCoffee: Coffee {
-    func getCost() -> Double {
-        return 1.0
-    }
-
-    func getIngredients() -> String {
-        return "Coffee"
-    }
+struct SwiftDeveloper: Developer {
+  func makeJob() -> String {
+    return "Write Swift code"
+  }
 }
 
-class CoffeeDecorator: Coffee {
-    private let decoratedCoffee: Coffee
-    fileprivate let ingredientSeparator: String = ", "
-
-    required init(decoratedCoffee: Coffee) {
-        self.decoratedCoffee = decoratedCoffee
-    }
-
-    func getCost() -> Double {
-        return decoratedCoffee.getCost()
-    }
-
-    func getIngredients() -> String {
-        return decoratedCoffee.getIngredients()
-    }
+class DeveloperDecorator: Developer {
+  var developer: Developer
+  func makeJob() -> String {
+    return developer.makeJob()
+  }
+  init(developer: Developer) {
+    self.developer = developer
+  }
 }
 
-final class Milk: CoffeeDecorator {
-    required init(decoratedCoffee: Coffee) {
-        super.init(decoratedCoffee: decoratedCoffee)
-    }
-
-    override func getCost() -> Double {
-        return super.getCost() + 0.5
-    }
-
-    override func getIngredients() -> String {
-        return super.getIngredients() + ingredientSeparator + "Milk"
-    }
+class SeniorSwiftDeveloper: DeveloperDecorator {
+  let codeReview = "Make code review"
+  override func makeJob() -> String {
+    return super.makeJob() + " & " + codeReview
+  }
 }
 
-final class WhipCoffee: CoffeeDecorator {
-    required init(decoratedCoffee: Coffee) {
-        super.init(decoratedCoffee: decoratedCoffee)
-    }
-
-    override func getCost() -> Double {
-        return super.getCost() + 0.7
-    }
-
-    override func getIngredients() -> String {
-        return super.getIngredients() + ingredientSeparator + "Whip"
-    }
+class SwiftTeamLead: DeveloperDecorator {
+  let sendWeekReport = "Send week report"
+  override func makeJob() -> String {
+    return super.makeJob() + " & " + sendWeekReport
+  }
 }
 /*:
 ### Usage:
 */
-var someCoffee: Coffee = SimpleCoffee()
-print("Cost : \(someCoffee.getCost()); Ingredients: \(someCoffee.getIngredients())")
-someCoffee = Milk(decoratedCoffee: someCoffee)
-print("Cost : \(someCoffee.getCost()); Ingredients: \(someCoffee.getIngredients())")
-someCoffee = WhipCoffee(decoratedCoffee: someCoffee)
-print("Cost : \(someCoffee.getCost()); Ingredients: \(someCoffee.getIngredients())")
+let developer = SwiftTeamLead(developer: SeniorSwiftDeveloper(developer: SwiftDeveloper()))
+print(developer.makeJob())

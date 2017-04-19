@@ -8,14 +8,14 @@ There are very few applications, do not overuse this pattern!
 
 ### Example:
 */
-class DeathStarSuperlaser {
-    static let sharedInstance = DeathStarSuperlaser()
-
-    private init() {
-        // Private initialization to ensure just one instance is created.
-    }
+struct Game {
+  static let sharedGame = Game()
+  
+  private init() {
+    
+  }
 }
 /*:
 ### Usage:
 */
-let laser = DeathStarSuperlaser.sharedInstance
+let game = Game.sharedGame

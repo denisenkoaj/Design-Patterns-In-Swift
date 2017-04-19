@@ -6,22 +6,48 @@ The facade pattern is used to define a simplified interface to a more complex su
 
 ### Example
 */
-enum Eternal {
+class Job {
+  func doJob() {
+    print("Job is progress...")
+  }
+}
 
-    static func set(_ object: Any, forKey defaultName: String) {
-        let defaults: UserDefaults = UserDefaults.standard
-        defaults.set(object, forKey:defaultName)
-        defaults.synchronize()
+class BugTracker {
+  var isActiveSprint = false
+  
+  func startSprint() {
+    print("Sprint is active")
+    isActiveSprint = true
+  }
+  
+  func stopSprint() {
+    print("Sprint is not active")
+    isActiveSprint = false
+  }
+}
+
+class Developer {
+  func doJobBeforeDeadline(bugTracker: BugTracker) {
+    if bugTracker.isActiveSprint {
+      print("Developer is solving problems...")
+    } else {
+      print("Developer is reading the news...")
     }
+  }
+}
 
-    static func object(forKey key: String) -> AnyObject! {
-        let defaults: UserDefaults = UserDefaults.standard
-        return defaults.object(forKey: key) as AnyObject!
-    }
-
+class Workflow {
+  let developer = Developer()
+  let job = Job()
+  let bugTracker = BugTracker()
+  func solveProblems() {
+    job.doJob()
+    bugTracker.startSprint()
+    developer.doJobBeforeDeadline(bugTracker: bugTracker)
+  }
 }
 /*:
 ### Usage
 */
-Eternal.set("Disconnect me. I’d rather be nothing", forKey:"Bishop")
-Eternal.object(forKey: "Bishop")
+let workflow = Workflow()
+workflow.solveProblems()

@@ -6,52 +6,82 @@ The mediator pattern is used to reduce coupling between classes that communicate
 
 ### Example
 */
-struct Programmer {
-
-    let name: String
-
-    init(name: String) {
-        self.name = name
-    }
-
-    func receive(message: String) {
-        print("\(name) received: \(message)")
-    }
+protocol Chat {
+  func sendMessage(_ message: String, from user: User)
 }
 
-protocol MessageSending {
-    func send(message: String)
+protocol User {
+  var ID: Int { set get }
+  var name: String { set get }
+  var chat: Chat { set get }
+  func sendMessage(_ message: String)
+  func getMessage(_ message: String)
 }
 
-final class MessageMediator: MessageSending {
+struct Admin: User {
+  internal var ID: Int
+  internal var name: String
+  internal var chat: Chat
+  
+  func sendMessage(_ message: String) {
+    chat.sendMessage(message, from: self)
+  }
+  
+  func getMessage(_ message: String) {
+    print("\(name) received message: \(message)")
+  }
+}
 
-    private var recipients: [Programmer] = []
+struct Client: User {
+  internal var ID: Int
+  internal var name: String
+  internal var chat: Chat
+  
+  func sendMessage(_ message: String) {
+    chat.sendMessage(message, from: self)
+  }
+  
+  func getMessage(_ message: String) {
+    print("\(name) received message: \(message)")
+  }
+}
 
-    func add(recipient: Programmer) {
-        recipients.append(recipient)
+class Telegram: Chat {
+  var admin: Admin?
+  var clients: [Client]?
+  
+  func addClient(client: Client) {
+    if clients == nil {
+      clients = [Client]()
     }
-
-    func send(message: String) {
-        for recipient in recipients {
-            recipient.receive(message: message)
+    clients?.append(client)
+  }
+  
+  func sendMessage(_ message: String, from user: User) {
+    if let clients = clients {
+      for client in clients {
+        if client.ID != user.ID {
+          client.getMessage(message)
         }
+      }
     }
+    
+    admin?.getMessage(message)
+  }
 }
 /*:
 ### Usage
 */
-func spamMonster(message: String, worker: MessageSending) {
-    worker.send(message: message)
-}
+var telegram = Telegram()
+let admin = Admin(ID: 1, name: "Pavel Durov", chat: telegram)
+let zsergey = Client(ID: 2, name: "Sergey Zapuhlyak", chat: telegram)
+let azimin = Client(ID: 3, name: "Alex Zimin", chat: telegram)
+telegram.admin = admin
+telegram.addClient(client: zsergey)
+telegram.addClient(client: azimin)
 
-let messagesMediator = MessageMediator()
-
-let user0 = Programmer(name: "Linus Torvalds")
-let user1 = Programmer(name: "Avadis 'Avie' Tevanian")
-messagesMediator.add(recipient: user0)
-messagesMediator.add(recipient: user1)
-
-spamMonster(message: "I'd Like to Add you to My Professional Network", worker: messagesMediator)
+zsergey.sendMessage("Hello, I am Sergey Zapuhlyak")
+admin.sendMessage("I am Administrator!")
 /*:
 >**Further Examples:** [Design Patterns in Swift](https://github.com/kingreza/Swift-Mediator)
 */

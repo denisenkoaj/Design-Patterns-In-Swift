@@ -6,56 +6,91 @@ The command pattern is used to express a request, including the call to be made 
 
 ### Example:
 */
-protocol DoorCommand {
-    func execute() -> String
+struct Database {
+  func insert() {
+    print("Inserting record...")
+  }
+  
+  func update() {
+    print("Updating record...")
+  }
+  
+  func select() {
+    print("Reading record...")
+  }
+  
+  func delete() {
+    print("Deleting record...")
+  }
 }
 
-class OpenCommand : DoorCommand {
-    let doors:String
-
-    required init(doors: String) {
-        self.doors = doors
-    }
-    
-    func execute() -> String {
-        return "Opened \(doors)"
-    }
+protocol Command {
+  var database: Database { set get }
+  func execute()
 }
 
-class CloseCommand : DoorCommand {
-    let doors:String
-
-    required init(doors: String) {
-        self.doors = doors
-    }
-    
-    func execute() -> String {
-        return "Closed \(doors)"
-    }
+struct InsertCommand: Command {
+  internal var database: Database
+  
+  func execute() {
+    database.insert()
+  }
 }
 
-class HAL9000DoorsOperations {
-    let openCommand: DoorCommand
-    let closeCommand: DoorCommand
-    
-    init(doors: String) {
-        self.openCommand = OpenCommand(doors:doors)
-        self.closeCommand = CloseCommand(doors:doors)
-    }
-    
-    func close() -> String {
-        return closeCommand.execute()
-    }
-    
-    func open() -> String {
-        return openCommand.execute()
-    }
+struct UpdateCommand: Command {
+  internal var database: Database
+  
+  func execute() {
+    database.update()
+  }
+}
+
+struct SelectCommand: Command {
+  internal var database: Database
+  
+  func execute() {
+    database.select()
+  }
+}
+
+struct DeleteCommand: Command {
+  internal var database: Database
+  
+  func execute() {
+    database.delete()
+  }
+}
+
+struct Developer {
+  var insert, update, select, delete: Command
+  
+  func insertRecord() {
+    insert.execute()
+  }
+  
+  func updateRecord() {
+    update.execute()
+  }
+  
+  func selectRecord() {
+    select.execute()
+  }
+  
+  func deleteRecord() {
+    delete.execute()
+  }
 }
 /*:
 ### Usage:
 */
-let podBayDoors = "Pod Bay Doors"
-let doorModule = HAL9000DoorsOperations(doors:podBayDoors)
+let database = Database()
+let insertCommand = InsertCommand(database: database)
+let updateCommand = UpdateCommand(database: database)
+let selectCommand = SelectCommand(database: database)
+let deleteCommand = DeleteCommand(database: database)
 
-doorModule.open()
-doorModule.close()
+let developer = Developer(insert: insertCommand, update: updateCommand, select: selectCommand, delete: deleteCommand)
+developer.insertRecord()
+developer.updateRecord()
+developer.selectRecord()
+developer.deleteRecord()
